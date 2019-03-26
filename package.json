@@ -4,7 +4,8 @@
   "description": "first app",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js"
+    "test": "node server.js",
+    "start":"node server_1.js"
   },
   "keywords": [
     "chatbot"
@@ -14,7 +15,6 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "nodemon": "^1.18.10",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0"
   }
