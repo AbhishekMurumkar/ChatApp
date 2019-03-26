@@ -1,0 +1,21 @@
+{
+  "name": "chatbotdemo",
+  "version": "1.0.0",
+  "description": "first app",
+  "main": "server.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "abhi",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "nodemon": "^1.18.10",
+    "socket.io": "^2.2.0",
+    "socket.io-client": "^2.2.0"
+  }
+}

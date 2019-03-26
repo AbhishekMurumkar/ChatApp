@@ -1,0 +1,124 @@
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>IO CHAT</title>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+
+        <!-- jQuery library -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <style>
+            body{
+                margin-top: 30px;
+            }
+            #messageRow{
+                display:none;
+            }
+        </style>
+    </head>
+    <body>
+    <div class="container">
+        <!-- user welcome / details form    -->
+        <div class="row" id="userRow">
+                <div class="col-md-12">
+                        <form id="userForm">
+                                <div class="form-group">
+                                    <label>Enter Your Email</label>
+                                    <input class="form-control" id="usermail"></input>
+                                    <input type="submit" class="btn btn-primary" value="login" />
+                                </div> 
+                        </form>
+                </div>
+        </div>
+        <!-- messaging row -->
+        <div class="row" id="messageRow">
+            <!-- users view section -->
+            <div class="col-md-4">
+                <div class="well">
+                    <h1 id="welcomeUser"></h1><br>
+                    <h3>Online Users</h3>
+                    <ul id="users" class="list-group">
+
+                    </ul>
+                </div>
+            </div>
+            <!-- main chat screen section -->
+            <div class="col-md-8">
+                <!-- placeholder for chats -->
+                <div class="chat" id="chat"></div>
+                <form id="messageForm">
+                    <div class="form-group">
+                        <label>Message To:</label>
+                        <input type="text" id="toMail" class="form-control" />
+                        <label>Enter Message:</label>
+                        <textarea class="form-control" id="message"></textarea>
+                        <input type="submit" class="btn btn-primary" value="send Message" />
+                    </div> 
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(function(){
+            var socket=io.connect();
+            $messageForm=$("#messageForm");
+            $message=$("#message");
+            $chat=$("#chat");
+            $toaddress=$("#toMail");
+
+            //handling user form start
+            $userForm=$("#userForm");
+            $users=$("#users");
+            $username=$("#usermail").val(); 
+            $userForm.submit(function(e){
+                $username=$("#usermail").val();
+                e.preventDefault();
+                console.log("submitted");
+                socket.emit("newUser",$username,function(data){
+                    if(data){
+                        console.log("new user connected");
+                        $("#userRow").hide();
+                        $("#messageRow").show();
+                        $("#welcomeUser").append("Welcome "+$username);
+                    }
+                });
+            });
+
+            //handling user form end  
+
+            $messageForm.submit(function(e){
+                e.preventDefault();
+                console.log("submitted");
+                socket.emit("sendMessage",$toaddress.val(),$message.val());
+                $message.val("");
+            });
+
+            socket.on("newMessage",function(data){
+                console.log("in the clinet");
+                console.log(data);
+                console.log(data.to);console.log(data.to==$username);
+                console.log(data.from);console.log(data.from==$username);
+                if(data.to==$username||data.from==$username){
+                    if(data.from==$username){
+                        $chat.append('<div class="well"><strong>'+data.from+'</strong> : '+data.msg+'</div>');
+                    }else{
+                        $chat.append('<div class="well"><strong>'+data.from+'</strong> : '+data.msg+'</div>');
+                    }
+
+                }
+            });
+
+            socket.on("getUsers",function(data){
+                    var text="";
+                    console.log(data);
+                    for(var i=0;i<data.length;i++){
+                        text=text+"<li class=\"list-group-item\">"+data[i]+"</li>";
+                    }
+                    $users.html(text);
+            });
+        })       
+    </script>
+    </body>
+    </html>
